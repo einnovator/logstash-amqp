@@ -107,6 +107,8 @@ public class AmqpAppender2 extends AppenderBase<ILoggingEvent> {
 	 */
 	public static final String THREAD_NAME = "thread";
 
+	private static final int MAX_CAPACITY = 10000;
+
 	/**
 	 * Name of the exchange to publish log events to.
 	 */
@@ -795,6 +797,10 @@ public class AmqpAppender2 extends AppenderBase<ILoggingEvent> {
 			event.getCallerData();
 		}
 		event.getThreadName();
+		if (this.events.size()>MAX_CAPACITY) {
+			System.out.println("Event queue overflow, ignoring logging event:" + event);
+			return;
+		}
 		this.events.add(new Event(event));
 	}
 
